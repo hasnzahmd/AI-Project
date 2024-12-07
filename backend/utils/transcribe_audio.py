@@ -6,10 +6,14 @@ import os
 deepgram = DeepgramClient()
 aai.settings.api_key = os.getenv('ASSEMBLY_AI_API_KEY') 
 
-async def convert_audio_to_transcript(audio_url, model, language):
+async def convert_audio_to_transcript(audio_buffer, model, language):
     try:
         if model in ["nova-2", "whisper-large"]:
             print(f"    Transcribing with Deepgram model - {model}")
+            
+            payload = {
+	            "buffer": audio_buffer,
+            }
             options = PrerecordedOptions(
                 model="nova-2",
                 language=language,
@@ -17,7 +21,7 @@ async def convert_audio_to_transcript(audio_url, model, language):
                 numerals=True,
                 dictation=True
             )
-            response = deepgram.listen.rest.v("1").transcribe_url({ "url": audio_url }, options)
+            response = deepgram.listen.rest.v("1").transcribe_file(payload, options)
             
             transcript = response["results"]["channels"][0]["alternatives"][0]["transcript"]
             confidence = response["results"]["channels"][0]["alternatives"][0]["confidence"]
@@ -35,7 +39,7 @@ async def convert_audio_to_transcript(audio_url, model, language):
                 format_text=False,
             )
             transcriber = aai.Transcriber(config=config)
-            transcript = transcriber.transcribe(audio_url)
+            transcript = transcriber.transcribe(audio_buffer)
             
             if transcript.status == aai.TranscriptStatus.error:
                 raise Exception(f"Error transcribing with Assembly AI: {transcript.error}")
@@ -51,13 +55,13 @@ async def convert_audio_to_transcript(audio_url, model, language):
         print('Error converting audio to text:', error)
         raise error
 
-async def transcribe_audio(audio_url, language):
+async def transcribe_audio(audio_buffer, language):
     print('\n>>>>>> Generating transcripts from audio')
     try:
         nova, whisper, assembly = await asyncio.gather(
-            convert_audio_to_transcript(audio_url, "nova-2", language),
-            convert_audio_to_transcript(audio_url, "whisper-large", language),
-            convert_audio_to_transcript(audio_url, "assembly-ai", language)
+            convert_audio_to_transcript(audio_buffer, "nova-2", language),
+            convert_audio_to_transcript(audio_buffer, "whisper-large", language),
+            convert_audio_to_transcript(audio_buffer, "assembly-ai", language)
         )
 
         print('>>>>>> Transcripts generation complete')

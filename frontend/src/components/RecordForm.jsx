@@ -8,7 +8,7 @@ import { languages, allModelsLanguageList } from '../constants/constants';
 export default function RecordForm({ GenerateReport, recordedAudioBlob, handleGenerateReport, info, setInfo }) {   
 
     const [formState, setFormState] = useState({
-        template: localStorage.getItem('template') || '',
+        template: '',
         audioLanguage: localStorage.getItem('audio_language') || 'en',
         reportLanguage: localStorage.getItem('report_language') || 'en',
     });
@@ -34,10 +34,6 @@ export default function RecordForm({ GenerateReport, recordedAudioBlob, handleGe
             toast.error("Please fill in all fields.");
             return;
         }
-
-        localStorage.setItem('patient_name', info.patientName)
-        localStorage.setItem('doctor_name', info.doctorName)
-        localStorage.setItem('clinic_name', info.clinicName)
         
         const data = {
             recordedAudioBlob,

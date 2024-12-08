@@ -7,9 +7,9 @@ import ViewReportModal from "./components/view-report-modal";
 function App() {
 
   const [info, setInfo] = useState({
-    patientName: localStorage.getItem('patient_name') || '',
-    doctorName: localStorage.getItem('doctor_name') || '',
-    clinicName: localStorage.getItem('clinic_name') || ''
+    patientName: '',
+    doctorName: '',
+    clinicName: ''
   })
   const [generateReport, setGenerateReport] = useState('')
   const [showReport, setShowReport] = useState(false);

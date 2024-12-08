@@ -120,7 +120,6 @@ const UploadFile = ({setReport, setShowReport, generateReport, setGenerateReport
   
       localStorage.setItem('audio_language', audioLanguage);
       localStorage.setItem('report_language', reportLanguage);
-      localStorage.setItem('template', template)
 
       const formData = new FormData();
       formData.append('audio_file', file);

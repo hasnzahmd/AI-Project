@@ -17,7 +17,7 @@ function DropDown({ options, handleOnChange, label, selectedValue, defaultValue 
         value={selectedValue}
         defaultValue={defaultValue}
       >
-        <option  className='text-[14px] font-SuisseIntlLight font-normal' disabled value={"select_template"}>{'Select template'}</option>
+        <option  className='text-[14px] font-SuisseIntlLight font-normal' value={"select_template"}>{'Select template'}</option>
         {options?.map((item, index) => {
           return (
             <option key={index} className='text-[14px] font-SuisseIntlLight font-normal' value={item.value}>{capitalize(item.name)}</option>

@@ -6,13 +6,10 @@ import os
 deepgram = DeepgramClient()
 aai.settings.api_key = os.getenv('ASSEMBLY_AI_API_KEY') 
 
-async def convert_audio_to_transcript(file_path, model, language):
+async def convert_audio_to_transcript(file_path, buffer_data, model, language):
     try:
         if model in ["nova-2", "whisper-large"]:
             print(f"    Transcribing with Deepgram model - {model}")
-            
-            with open(file_path, "rb") as file:
-                buffer_data = file.read()
             
             payload: FileSource = {
 	            "buffer": buffer_data,
@@ -64,10 +61,13 @@ async def convert_audio_to_transcript(file_path, model, language):
 async def transcribe_audio(file_path, language):
     print('\n>>>>>> Generating transcripts from audio')
     try:
+        with open(file_path, "rb") as file:
+            buffer_data = file.read()
+            
         nova, whisper, assembly = await asyncio.gather(
-            convert_audio_to_transcript(file_path, "nova-2", language),
-            convert_audio_to_transcript(file_path, "whisper-large", language),
-            convert_audio_to_transcript(file_path, "assembly-ai", language)
+            convert_audio_to_transcript(file_path, buffer_data, "nova-2", language),
+            convert_audio_to_transcript(file_path, buffer_data, "whisper-large", language),
+            convert_audio_to_transcript(file_path, buffer_data, "assembly-ai", language)
         )
 
         print('>>>>>> Transcripts generation complete')

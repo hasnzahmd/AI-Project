@@ -1,3 +1,159 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.App {
+    background-color: #FAFAFA;
+  }
+  
+  .card-shadow {
+    background-color: white;
+    border: 1px solid #0000000A;
+    box-shadow: 0px 1px 2px 0px #0000000A;
+    border-radius: 20px;
+  }
+  
+  .header-shadow {
+    box-shadow: 0px 1px 2px 0px #0000000A;
+  }
+  
+  .nav-shadow {
+    box-shadow: 0px 1px 2px 0px #0000000A;
+  }
+  
+  .inputFieldShadow{
+    box-shadow: 0px 1px 2px 0px #5258660F;
+    font-weight: 400;
+  }
+  
+  .tab-shadow{
+    box-shadow: 0px 2px 4px 0px #1B1C1D05;
+  }
+  
+  .pagination-arrow {
+    line-height: 0.925rem;
+  }
+  
+  .pagination-number {
+    line-height: 1.1rem;
+  }
+  
+  .sub-heading {
+    font-size: 1.17em; font-weight: bold; margin: 0px 0px 15px; line-height: 1rem;
+  }
+  
+  .sub-heading-initial {
+    font-size: 1.17em; font-weight: bold; margin-right: 5px; line-height: 1;
+  }
+  
+  .sub-heading-suffix {
+    font-size: 1.17em; line-height: 1;
+  }
+  
+  .span-rating-bad {
+    color: #E00036;
+  }
+  
+  .span-rating-medium {
+    color: #CF6B00;
+  }
+  
+  .span-rating-good {
+    color: #02A758;
+  }
+  
+  .filter-count {
+    line-height: 0.75rem;
+  }
+  
+  .wave-container {
+    background-color: #F1F3F5;
+    border-radius: 8px;
+    overflow: hidden;
+    /* margin-bottom: 1rem; */
+  }
+  
+  .wave-wrapper {
+    width: calc(50% - 1px);
+    border-right: 1px solid #1975FF;
+  }
+  
+  .weglot-container{
+    display: none !important;
+  }
+  
+  .dot {
+    height: 8px;
+    width: 8px;
+    background-color: #FF0000;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .recorder-wrapper {
+    width: 100%;
+  }
+  
+  .trial-end-blur{
+    opacity: 10;
+  }
+  
+  /* @media (min-width: 640px) {
+    .recorder-wrapper {
+      width: calc(100% + 3rem);
+      margin-bottom: -1.5rem;
+    }
+  }*/
+  
+  .circle {
+    display: inline-block;
+    line-height: 0px;
+    border-radius: 50%;
+    font-size: 11px;
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .circle.mobile {
+    font-size: 11px;
+  }
+  
+  .circle span {
+    display: inline-block;
+    padding-top: 50%;
+    padding-bottom: 50%;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+  
+  .circle.mobile span {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+  
+  .small-spinner {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .large-spinner {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .no-scroll {
+    overflow: hidden;
+  }
+  
+  /* Hide scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE and Edge */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }

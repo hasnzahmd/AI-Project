@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from typing import List
 from utils.transcribe_audio import transcribe_audio
-from utils.generate_report import generate_structured_report
+from utils.generate_report import generate_report
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
@@ -22,7 +22,7 @@ app.add_middleware(
 @app.post("/generate-report")
 async def generate_medical_report(
     audio_file: UploadFile = File(...),
-    fields: List[str] = Form(...),
+    template: str = Form(...),
     audio_language: str = Form(...),
     report_language: str = Form(...)
 ):
@@ -34,10 +34,10 @@ async def generate_medical_report(
             shutil.copyfileobj(audio_file.file, buffer)
 
         transcriptions = await transcribe_audio(file_path, audio_language)
-        structured_report = await generate_structured_report(transcriptions, report_language, fields)
+        report = await generate_report(transcriptions, report_language, template)
         
         os.remove(file_path)
-        return {"message": "Medical report generated successfully", "report": structured_report}
+        return {"message": "Medical report generated successfully", "report": report}
     except Exception as e:
         os.remove(file_path)
         raise HTTPException(status_code=500, detail=f"Error generating medical report: {str(e)}")

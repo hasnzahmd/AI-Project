@@ -1,7 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import UpoloadFile from '../images/upload.png';
 import CheckCircle from '../images/check-circle.png'
-import { useNavigate } from 'react-router-dom';
 import Button from './ui/Button'
 import { GradientBorder } from './ui/GradientBorder';
 import GeneratingIcon from '../images/generating.gif'
@@ -11,15 +10,12 @@ import { CardWrapper } from './ui/CardWrapper';
 import RecordForm from './RecordForm';
 import { fetchReport } from '../utils/apis';
 
-const UploadFile = () => {
+const UploadFile = ({setReport, setShowReport, generateReport, setGenerateReport, info, setInfo}) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
   const [AudioDuration, setAudioDuration] = useState(0)
   const [uploadModelOpen, setUploadModelOpen] = useState(false)
-  const [generateReport, setGenerateReport] = useState('')
   const [resetState, setResetState] = useState()
-
-  const navigate = useNavigate()
 
   const handleResetState = useCallback(() => {
     setSelectedFile(null);
@@ -27,7 +23,7 @@ const UploadFile = () => {
     setUploadModelOpen(false);
     setGenerateReport('');
     setResetState(prevState => !prevState); 
-  }, []);
+  }, [setGenerateReport]);
 
   useEffect(() => {
     const theFile = document.getElementById('fileInput');
@@ -88,7 +84,7 @@ const UploadFile = () => {
   };
 
   const handleGenerateReport = async (data) => {
-    const { reportLanguage, audioLanguage } = data;
+    const { reportLanguage, audioLanguage, template } = data;
     const file = data.selectedFile || data.recordedAudioBlob;
   
     console.log('File to upload:', file); 
@@ -124,18 +120,18 @@ const UploadFile = () => {
   
       localStorage.setItem('audio_language', audioLanguage);
       localStorage.setItem('report_language', reportLanguage);
-
-      const fields = ["diagnosis", "findings", "medication", "procedure", "recipes", "therapy"];
+      localStorage.setItem('template', template)
 
       const formData = new FormData();
       formData.append('audio_file', file);
       formData.append('report_language', reportLanguage);
       formData.append('audio_language', audioLanguage);
-      formData.append('fields', fields)
+      formData.append('template', template);
 
       const response = await fetchReport(formData);
       if(response){
         console.log('report:', response.report);
+        setReport(response.report);
         setGenerateReport('upload-report-generated');
       } else
         setGenerateReport('');
@@ -147,7 +143,7 @@ const UploadFile = () => {
   };
 
   const handleGoToReport = () => {
-    navigate('/')
+    setShowReport(true);
   }
 
   const disabled = false;
@@ -215,7 +211,7 @@ const UploadFile = () => {
               </GradientBorder>
               <h1 className='font-medium mt-[16px] text-[24px]'>Selected · <span data-wg-notranslate>{formatTime(AudioDuration)} </span></h1>
               <p className='sm:w-[320px] max-w-[320px] mt-[4px] text-[16px] text-[#505050] font-SuisseIntlLight font-normal'>Click the button below to start generating the report</p>
-              <RecordForm GenerateReport={setGenerateReport} HandleResetState={handleResetState} handleGenerateReport={handleGenerateReport} recordedAudioBlob={selectedFile} />
+              <RecordForm GenerateReport={setGenerateReport} HandleResetState={handleResetState} handleGenerateReport={handleGenerateReport} recordedAudioBlob={selectedFile} info={info} setInfo={setInfo}/>
                 </div>
           </CardWrapper>
         )

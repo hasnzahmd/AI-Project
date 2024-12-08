@@ -1,12 +1,11 @@
 import os
-import json
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
-from utils.contexts import generationContext, mergingContext, reportTemplateContext
+from utils.contexts import generationContext, mergingContext, AIReportContext, NoTemplateContext
 
-async def generate_from_text(transcriptions, language, fields):
+async def generate_from_text(transcriptions, language, template):
     nova_transcription = transcriptions['nova_transcription']
     whisper_transcription = transcriptions['whisper_transcription']
     assembly_transcription = transcriptions['assembly_transcription']
@@ -14,7 +13,10 @@ async def generate_from_text(transcriptions, language, fields):
     if nova_transcription and whisper_transcription:
         try:
             # Preparing the report template with the provided fields
-            report_template = reportTemplateContext.replace("{fields}", ", ".join(fields))
+            if template == 'ai_template':
+                report_template = AIReportContext
+            elif template == 'no_template':
+                report_template = NoTemplateContext
 
             # Create prompt templates
             merging_prompt = PromptTemplate.from_template(mergingContext)
@@ -48,23 +50,25 @@ async def generate_from_text(transcriptions, language, fields):
                 'template': report_template
             })
             
+            print('result:', generation_result)
             return generation_result
 
         except Exception as error:
             raise RuntimeError(f"Error during report generation: {error}")
 
 
-async def generate_structured_report(transcriptions, language, fields):
+async def generate_report(transcriptions, language, template):
     try:
         print('\n>>>>>> Generating JSON response')
         
-        response = await generate_from_text(transcriptions, language, fields)
+        print('template:', template)
+        response = await generate_from_text(transcriptions, language, template)
         
-        structured_report = json.loads(response)
+        report = response
         
         print('>>>>>> Response generated successfully')
 
-        return structured_report
+        return report
 
     except Exception as error: 
         print('Error generating structured report', error)

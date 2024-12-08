@@ -1,4 +1,4 @@
-from deepgram import DeepgramClient, PrerecordedOptions
+from deepgram import DeepgramClient, PrerecordedOptions, FileSource
 import assemblyai as aai
 import asyncio
 import os
@@ -6,10 +6,15 @@ import os
 deepgram = DeepgramClient()
 aai.settings.api_key = os.getenv('ASSEMBLY_AI_API_KEY') 
 
-async def convert_audio_to_transcript(audio_url, model, language):
+async def convert_audio_to_transcript(file_path, buffer_data, model, language):
     try:
         if model in ["nova-2", "whisper-large"]:
             print(f"    Transcribing with Deepgram model - {model}")
+            
+            payload: FileSource = {
+	            "buffer": buffer_data,
+            }
+            
             options = PrerecordedOptions(
                 model="nova-2",
                 language=language,
@@ -17,11 +22,12 @@ async def convert_audio_to_transcript(audio_url, model, language):
                 numerals=True,
                 dictation=True
             )
-            response = deepgram.listen.rest.v("1").transcribe_url({ "url": audio_url }, options)
+            response = deepgram.listen.rest.v("1").transcribe_file(payload, options)
             
             transcript = response["results"]["channels"][0]["alternatives"][0]["transcript"]
             confidence = response["results"]["channels"][0]["alternatives"][0]["confidence"]
             
+            print('Transcription of model:', transcript)
             return {
                 "result": transcript,
                 "confidence": confidence,
@@ -35,11 +41,12 @@ async def convert_audio_to_transcript(audio_url, model, language):
                 format_text=False,
             )
             transcriber = aai.Transcriber(config=config)
-            transcript = transcriber.transcribe(audio_url)
+            transcript = transcriber.transcribe(file_path)
             
             if transcript.status == aai.TranscriptStatus.error:
                 raise Exception(f"Error transcribing with Assembly AI: {transcript.error}")
 
+            print('Transcription of model:', transcript.text)
             return {
                 "result": transcript.text,
                 "confidence": transcript.confidence,
@@ -51,13 +58,16 @@ async def convert_audio_to_transcript(audio_url, model, language):
         print('Error converting audio to text:', error)
         raise error
 
-async def transcribe_audio(audio_url, language):
+async def transcribe_audio(file_path, language):
     print('\n>>>>>> Generating transcripts from audio')
     try:
+        with open(file_path, "rb") as file:
+            buffer_data = file.read()
+            
         nova, whisper, assembly = await asyncio.gather(
-            convert_audio_to_transcript(audio_url, "nova-2", language),
-            convert_audio_to_transcript(audio_url, "whisper-large", language),
-            convert_audio_to_transcript(audio_url, "assembly-ai", language)
+            convert_audio_to_transcript(file_path, buffer_data, "nova-2", language),
+            convert_audio_to_transcript(file_path, buffer_data, "whisper-large", language),
+            convert_audio_to_transcript(file_path, buffer_data, "assembly-ai", language)
         )
 
         print('>>>>>> Transcripts generation complete')

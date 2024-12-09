@@ -130,15 +130,11 @@ Report Language:
 """
 
 NoTemplateContext = """
-### Transcription
-
-- deliver the voice memo transcription here word by word without any additional structure in one single paragraph
+deliver the voice memo transcription here word by word without any additional structure in one single paragraph
 """
 
 AIReportContext = """
-### AI generated report
-
-- structure content of the medical report here as you see fit (using the power of AI), always use H3 headings for the sections and then add the content below
+ structure content of the medical report here as you see fit (using the power of AI), always use H3 headings for the sections and then add the content below
 """
 
 structuredReportContext = """
